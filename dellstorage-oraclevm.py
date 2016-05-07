@@ -44,6 +44,7 @@ def main():
     r=ovms.get(ovmUri+'/StorageElement')
     ovmdisks=r.json()
     for disk in ovmdisks:
+        #print json.dumps(disk, indent=4, sort_keys=True)
         if disk['vendor'] == 'COMPELNT':
             for delldisk in delldisks:
                 #Oracle VM puts the Page 83 Type in front of the actual identifier
@@ -52,8 +53,22 @@ def main():
                     print 'Disk with Page 83 Id ' + delldisk['deviceId']
                     print 'Oracle VM  name is ' + disk['name']
                     print 'Compellent name is ' + delldisk['name']
+
+                    if disk['name'] == delldisk['name']:
+                        print 'Names match, no change needed.'
+                    else:
+                        print 'Names do not match, change needed.'
+                        name = {}
+                        name.update({'name': delldisk['name']})
+                        r=ovms.post(ovmUri+'/StorageElement/'+disk['id']['value'],name,ovms.headers)
+                        print r
+                        print r.json()
+
                     print
-#            print json.dumps(disk, indent=4, sort_keys=True)
+                    break
+
+            
+
 
 
     r=dells.post(dellUri+'/ApiConnection/Logout','{}')
