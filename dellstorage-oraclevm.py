@@ -46,10 +46,12 @@ def main():
     for disk in ovmdisks:
         #print json.dumps(disk, indent=4, sort_keys=True)
         if disk['vendor'] == 'COMPELNT':
+            found = False
             for delldisk in delldisks:
                 #Oracle VM puts the Page 83 Type in front of the actual identifier
                 #so cut off the first character
                 if disk['page83Id'][1:] == delldisk['deviceId']:
+                    found = True
                     print 'Disk with Page 83 Id ' + delldisk['deviceId']
                     print 'Oracle VM  name is ' + disk['name']
                     print 'Compellent name is ' + delldisk['name']
@@ -65,6 +67,9 @@ def main():
                         print r.json()
                     print
                     break
+                    
+            if not found:
+                print 'Unable to find match for ' + disk['name']
 
     r=dells.post(dellUri+'/ApiConnection/Logout','{}')
 
