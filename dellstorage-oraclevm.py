@@ -57,19 +57,14 @@ def main():
                     if disk['name'] == delldisk['name']:
                         print 'Names match, no change needed.'
                     else:
-                        print 'Names do not match, change needed.'
-                        name = {}
+                        print 'Names do not match, changing on Oracle VM Manager.'
+                        name = disk
                         name.update({'name': delldisk['name']})
-                        r=ovms.put(ovmUri+'/StorageElement/'+disk['id']['value'],name)
+                        r=ovms.put(ovmUri+'/StorageElement/'+disk['id']['value'],json.dumps(name))
                         print r
                         print r.json()
-
                     print
                     break
-
-            
-
-
 
     r=dells.post(dellUri+'/ApiConnection/Logout','{}')
 
