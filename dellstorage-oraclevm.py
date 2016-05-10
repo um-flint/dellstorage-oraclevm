@@ -60,7 +60,7 @@ def main():
                         print 'Names do not match, change needed.'
                         name = {}
                         name.update({'name': delldisk['name']})
-                        r=ovms.post(ovmUri+'/StorageElement/'+disk['id']['value'],name,ovms.headers)
+                        r=ovms.put(ovmUri+'/StorageElement/'+disk['id']['value'],name)
                         print r
                         print r.json()
 
