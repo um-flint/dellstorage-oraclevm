@@ -4,4 +4,8 @@ It can be run with './dellstorage-oraclevm.py' and expects a config file in the 
 
 It was written on a Mac with Python 2.7.
 
-I have tested it with Dell Storage Enterprise Manager 2015 R3 and Oracle VM Manager 3.3.4.
+I have tested it with:
+* Dell Storage Enterprise Manager 2015 R3
+* Dell Storage Manager 2016 R3
+* Oracle VM Manager 3.3.4
+* Oracle VM Manager 3.4.3
