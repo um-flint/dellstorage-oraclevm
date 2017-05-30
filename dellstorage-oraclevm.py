@@ -17,6 +17,7 @@ def check_manager_state(baseUri,s):
     return
 
 def main():
+    #parse the config file
     config = ConfigParser.ConfigParser()
     config.readfp(open('dellstorage-oraclevm.cfg'))
     dellusername = config.get('dell','username')
@@ -26,23 +27,28 @@ def main():
     ovmpassword = config.get('ovm','password')
     ovmUri = config.get('ovm','baseUri')
 
+    #open a session with Dell Storage Manager
     dells=requests.Session()
     dells.headers.update({'Accept': 'application/json', 'Content-Type': 'application/json', 'x-dell-api-version': '2.2'})
     dells.verify=False #disable once we get a real cert
+    dellauth = {'Authorization': 'Basic ' + base64.b64encode(dellusername + ':' + dellpassword), 'Content-Type': 'application/json', 'x-dell-api-version': '2.2'}
+    r=dells.post(dellUri+'/ApiConnection/Login','{}',headers=dellauth)
 
+    #open a sesion with Oracle VM Manager
     ovms=requests.Session()
     ovms.auth=(ovmusername, ovmpassword)
     ovms.headers.update({'Accept': 'application/json', 'Content-Type': 'application/json'})
     check_manager_state(ovmUri,ovms)
 
-    dellauth = {'Authorization': 'Basic ' + base64.b64encode(dellusername + ':' + dellpassword), 'Content-Type': 'application/json', 'x-dell-api-version': '2.2'}
-    r=dells.post(dellUri+'/ApiConnection/Login','{}',headers=dellauth)
-
+    #get a list of all Volumes from the Dell Storage Manager
     r=dells.get(dellUri+'/StorageCenter/ScVolume')
     delldisks=r.json()
     
+    #get a list of all physical disks in Oracle VM Manager
     r=ovms.get(ovmUri+'/StorageElement')
     ovmdisks=r.json()
+
+    #Match up the OVMM Disk with the Compellent Disk and set the name to match in OVMM
     for disk in ovmdisks:
         #print json.dumps(disk, indent=4, sort_keys=True)
         if disk['vendor'] == 'COMPELNT':
@@ -71,6 +77,7 @@ def main():
             if not found:
                 print 'Unable to find match for ' + disk['name']
 
+    #log out of Dell Storage Manager
     r=dells.post(dellUri+'/ApiConnection/Logout','{}')
 
     return
