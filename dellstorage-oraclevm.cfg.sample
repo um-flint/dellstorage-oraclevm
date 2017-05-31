@@ -7,3 +7,6 @@ baseUri = https://dell.example.com:3033/api/rest
 username = admin
 password = yourpassword
 baseUri = https://ovmm.example.com:7002/ovm/core/wsapi/rest
+
+[general]
+debug = False

@@ -29,6 +29,10 @@ def main():
     ovmpassword = config.get('ovm','password')
     ovmUri = config.get('ovm','baseUri')
 
+    dbg = False
+    if config.has_option('general', 'debug'):
+        dbg = config.getbool('general', 'debug')
+
     #open a session with Dell Storage Manager
     dells=requests.Session()
     dells.headers.update({'Accept': 'application/json', 'Content-Type': 'application/json', 'x-dell-api-version': '2.2'})
@@ -52,7 +56,6 @@ def main():
 
     #Match up the OVMM Disk with the Compellent Disk and set the name to match in OVMM
     for disk in ovmdisks:
-        #print json.dumps(disk, indent=4, sort_keys=True)
         if disk['vendor'] == 'COMPELNT':
             found = False
             for delldisk in delldisks:
@@ -60,20 +63,29 @@ def main():
                 #so cut off the first character
                 if disk['page83Id'][1:] == delldisk['deviceId']:
                     found = True
-                    print 'Disk with Page 83 Id ' + delldisk['deviceId']
-                    print 'Oracle VM  name is ' + disk['name']
-                    print 'Compellent name is ' + delldisk['name']
 
                     if disk['name'] == delldisk['name']:
-                        print 'Names match, no change needed.'
+                        if dbg is True:
+                            print 'Disk with Page 83 Id ' + delldisk['deviceId']
+                            print 'Oracle VM  name is ' + disk['name']
+                            print 'Compellent name is ' + delldisk['name']
+                            print 'Names match, no change needed.'
+                            print
                     else:
+                        print 'Disk with Page 83 Id ' + delldisk['deviceId']
+                        print 'Oracle VM  name is ' + disk['name']
+                        print 'Compellent name is ' + delldisk['name']
                         print 'Names do not match, changing on Oracle VM Manager.'
                         name = disk
                         name.update({'name': delldisk['name']})
                         r=ovms.put(ovmUri+'/StorageElement/'+disk['id']['value'],json.dumps(name))
                         print r
-                        print r.json()
-                    print
+                        if dbg is True:
+                            print r.json()
+                            print
+                        else:
+                            print
+                                 
                     break
                     
             if not found:
