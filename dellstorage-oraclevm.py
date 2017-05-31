@@ -4,6 +4,8 @@ import requests
 import json
 import base64
 import ConfigParser
+import os
+import sys
 
 #taken from the Oracle VM Web Services API Developer's Guide
 def check_manager_state(baseUri,s):
@@ -19,7 +21,7 @@ def check_manager_state(baseUri,s):
 def main():
     #parse the config file
     config = ConfigParser.ConfigParser()
-    config.readfp(open('dellstorage-oraclevm.cfg'))
+    config.readfp(open(os.path.join(sys.path[0],'dellstorage-oraclevm.cfg')))
     dellusername = config.get('dell','username')
     dellpassword = config.get('dell','password')
     dellUri = config.get('dell','baseUri')
