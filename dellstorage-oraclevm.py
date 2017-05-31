@@ -31,7 +31,7 @@ def main():
 
     dbg = False
     if config.has_option('general', 'debug'):
-        dbg = config.getbool('general', 'debug')
+        dbg = config.getboolean('general', 'debug')
 
     #open a session with Dell Storage Manager
     dells=requests.Session()
@@ -85,7 +85,7 @@ def main():
                             print
                         else:
                             print
-                                 
+
                     break
                     
             if not found:
